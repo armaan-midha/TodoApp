@@ -1,59 +1,36 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Divider, List, Text, TextInput, useTheme } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import { SafeAreaView, ScrollView, View } from 'react-native';
+import { Keyboard, SafeAreaView, ScrollView, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Feather';
 import { SwipeableListItem } from '../components';
-
-
-const permanentList = [
-    {
-        id: 1,
-        name: "My Day",
-        icon: "sun",
-        iconColour: "#686D76"
-    },
-    {
-        id: 2,
-        name: "Important",
-        icon: "star",
-        iconColour: "#F4CE14"
-    },
-    {
-        id: 3,
-        name: "Planned",
-        icon: "calendar",
-        iconColour: "#CBFFA9"
-    },
-    {
-        id: 4,
-        name: "Tasks",
-        icon: "home",
-        iconColour: "#C8ACD6"
-    },
-    {
-        id: 5,
-        name: "Flagged",
-        icon: "flag",
-        iconColour: "#FF8989"
-    }
-]
-
-const createdList = [
-    {
-        id: 1,
-        name: "UAT issues"
-    },
-    {
-        id: 2,
-        name: "PROD issues"
-    },
-]
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { createTaskList, deleteTaskList, fetchTaskLists } from '../store/TaskList/async-actions';
 
 export default function TaskList() {
     const navigation = useNavigation();
     const { colors } = useTheme();
+    const dispatch = useAppDispatch();
+
+    const [newListName, setNewListName] = useState('');
+
+    useEffect(() => {
+        dispatch(fetchTaskLists());
+    }, [])
+
+    const { taskList } = useAppSelector(state => state.taskList);
+
+    const permanentList = taskList.filter(list => !list.deletable)
+    const deletableList = taskList.filter(list => list.deletable)
+
+    const handleAddList = () => {
+        if (newListName.trim()) {
+            dispatch(createTaskList(newListName.trim()));
+            setNewListName('');
+            Keyboard.dismiss();
+        }
+    };
 
 
     return (
@@ -68,8 +45,8 @@ export default function TaskList() {
                 </View>
                 <Divider />
                 <View style={{ marginVertical: 4 }}>
-                    {createdList.map((list) => (
-                        <SwipeableListItem key={list.id} onDelete={() => console.log(list.id)}>
+                    {deletableList.map((list) => (
+                        <SwipeableListItem key={list.id} onDelete={() => dispatch(deleteTaskList(list.id))}>
                             <TouchableOpacity onPress={() => navigation.navigate('Tasks', { list: list })} key={list.id}>
                                 <List.Item title={list.name} titleStyle={{ color: '#fff', fontSize: 18, fontWeight: "700" }} left={props => <Icon {...props} color={colors.surface} size={20} name="list" />} />
                             </TouchableOpacity>
@@ -78,7 +55,7 @@ export default function TaskList() {
                 </View>
             </ScrollView>
             <View>
-                <TextInput left={<TextInput.Icon color={colors.surface} icon='plus' size={20} />} style={{ margin: 8, backgroundColor: colors.background, fontSize: 18, fontWeight: "700" }} textColor={colors.surface} placeholderTextColor={'#fff'} placeholder='New List' />
+                <TextInput onSubmitEditing={handleAddList} value={newListName} onChangeText={setNewListName} left={<TextInput.Icon color={colors.surface} icon='plus' size={20} />} style={{ margin: 8, backgroundColor: colors.background, fontSize: 18, fontWeight: "700" }} textColor={colors.surface} placeholderTextColor={'#fff'} placeholder='New List' />
             </View>
         </SafeAreaView>
     );

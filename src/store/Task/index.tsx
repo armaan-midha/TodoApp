@@ -1,21 +1,37 @@
-// reducers/todoSlice.js
-
 import { createSlice } from '@reduxjs/toolkit';
+import { createSetState } from '../utility';
 
-const initialState = {
-    todos: [],
+interface TaskType {
+    id: number,
+    title: string,
+    description: string,
+    dueDate: string,
+    reminder: string,
+    isRecurring: boolean,
+    recurrencePattern: string | null,
+    createdAt: string,
+    updatedAt: string,
+    done: boolean,
+    recurring: boolean
+}
+
+
+export interface TodoState {
+    task: Array<TaskType>
+}
+
+const initialState : TodoState = {
+    task: [],
 };
 
-const todoSlice = createSlice({
-    name: 'todos',
+const taskSlice = createSlice({
+    name: 'task',
     initialState,
     reducers: {
-        addTodo: (state, action) => {
-            state.todos.push(action.payload);
-        },
-        // add more reducers as needed
+        setTask: createSetState('task')
     },
 });
 
-export const { addTodo } = todoSlice.actions;
-export default todoSlice.reducer;
+export const taskActions = taskSlice.actions;
+
+export default taskSlice.reducer;
