@@ -13,21 +13,21 @@ const tasks = [
     "reminder": "2024-07-20T18:00:00",
     "isRecurring": false,
     "recurrencePattern": null,
-    "createdAt": "2024-07-18T08:25:45.526085",
-    "updatedAt": "2024-07-18T08:29:23.477298",
+    "createdAt": "2024-07-18",
+    "updatedAt": "2024-07-18",
     "done": true,
     "recurring": false
   },
   {
     "id": 252,
-    "title": "Complete Project Proposal",
+    "title": "Complete Project Proposalrgregrtewtewrt rtrewtrewterwt trewtrewtewrterwt",
     "description": "Write a detailed proposal for the upcoming project.",
     "dueDate": "2024-07-16T10:00:00",
     "reminder": "2024-07-15T18:00:00",
     "isRecurring": false,
     "recurrencePattern": null,
-    "createdAt": "2024-07-20T13:17:33.070135",
-    "updatedAt": "2024-07-20T13:17:33.070311",
+    "createdAt": "2024-07-20",
+    "updatedAt": "2024-07-20",
     "done": false,
     "recurring": true
   }
@@ -50,11 +50,11 @@ export default function Tasks() {
 
   const handleTaskPress = (task) => {
     console.log(task);
-    
-    navigation.navigate('TaskConfig', { task });
+
+    navigation.navigate('TaskConfig', { task, list });
   };
 
-  const handleDelete = (taskId : number) => {
+  const handleDelete = (taskId: number) => {
     console.log(taskId);
   };
 
@@ -74,7 +74,23 @@ export default function Tasks() {
         <ReusbaleTaskList tasks={completedTasks} list={list} colors={colors} onTaskPress={handleTaskPress} onDelete={handleDelete} />
       </ScrollView>
       <View>
-        <TextInput left={<TextInput.Icon color={colors.surface} icon='plus' size={20} />} style={{ margin: 8, backgroundColor: colors.background, fontSize: 18, fontWeight: "700" }} textColor={colors.surface} placeholderTextColor={'#fff'} placeholder='Add a Task' />
+        <TextInput
+          left={
+            <TextInput.Icon
+              color={colors.surface}
+              icon='plus'
+              size={20} />}
+          style=
+          {{
+            margin: 8,
+            backgroundColor:
+              colors.background,
+            fontSize: 18,
+            fontWeight: "700"
+          }}
+          textColor={colors.surface}
+          placeholderTextColor={'#fff'}
+          placeholder='Add a Task' />
       </View>
     </SafeAreaView>
   );
