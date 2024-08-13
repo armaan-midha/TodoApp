@@ -1,6 +1,8 @@
 import {Action, ThunkAction, configureStore} from '@reduxjs/toolkit';
 import appReducer from './slice';
 import taskListReducer from './TaskList'
+import taskReducer from './Task';
+
 
 
 export function makeStore() {
@@ -8,6 +10,7 @@ export function makeStore() {
     reducer: {
       app: appReducer,
       taskList: taskListReducer,
+      task: taskReducer,
     },
   });
 }

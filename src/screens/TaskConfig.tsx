@@ -1,35 +1,62 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, SafeAreaView, TouchableOpacity, ScrollView } from 'react-native';
 import { Divider, List, Text, TextInput, useTheme } from 'react-native-paper';
-import { useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { AnimatedTickIcon } from '../components';
 import AntIcon from 'react-native-vector-icons/AntDesign';
 import Icon from 'react-native-vector-icons/Feather';
 import BottomSheetModal from '../components/BottomSheetModal';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { deleteTask, fetchTask, updateTask } from '../store/Task/async-actions';
+import { TaskType } from '../store/Task';
 
 const TaskConfig = () => {
   const { colors } = useTheme();
   const route = useRoute();
   const { task, list } = route.params;
+  const navigation = useNavigation();
 
   const [title, setTitle] = useState(task.title);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalTitle, setModalTitle] = useState('');
   const [modalOptions, setModalOptions] = useState<string[]>([]);
 
+  const dispatch = useAppDispatch();
+
+  const { currentTask } = useAppSelector(state => state.task);
+
+  useEffect(() => {
+    if (task.id) {
+      dispatch(fetchTask({ taskId: task.id }));
+    }
+  }, [task.id, dispatch]);
+
+  useEffect(() => {
+    if (currentTask.title) {
+      setTitle(currentTask.title);
+    }
+  }, [currentTask.title]);
+
   const handleTitleChange = (text) => {
     setTitle(text);
   };
 
   const handleTitleSubmit = () => {
-    // Here you would update the task title in your state or send it to your backend
-    console.log(`Updated title: ${title}`);
+    dispatch(updateTask({ taskListId: list.id, task: { id: currentTask.id, title } }));
   };
 
   const showModal = (title: string, options: string[]) => {
     setModalTitle(title);
     setModalOptions(options);
     setModalVisible(true);
+  };
+
+  const handleDone = () => {
+    dispatch(updateTask({ taskListId: list.id, task: { id: currentTask.id, done: !currentTask.done } }));
+  };
+
+  const handleImportant = () => {
+    dispatch(updateTask({ taskListId: list.id, task: { id: currentTask.id, important: !currentTask.important } }));
   };
 
   return (
@@ -51,16 +78,16 @@ const TaskConfig = () => {
               fontSize: 22,
               fontWeight: '700',
               backgroundColor: colors.background,
-              textDecorationLine: task.done ? 'line-through' : 'none',
+              textDecorationLine: currentTask.done ? 'line-through' : 'none',
             }}
           />
         }
         left={() => (
-          <AnimatedTickIcon isDone={task.done} onPress={() => console.log(task.id)} iconColour={colors.surface} />
+          <AnimatedTickIcon isDone={currentTask.done} onPress={handleDone} iconColour={colors.surface} />
         )}
         right={() => (
-          <TouchableOpacity onPress={() => console.log(task.id)}>
-            <AntIcon color={colors.surface} size={24} name={task.recurring ? 'star' : 'staro'} />
+          <TouchableOpacity onPress={handleImportant}>
+            <AntIcon color={colors.surface} size={24} name={currentTask.important ? 'star' : 'staro'} />
           </TouchableOpacity>
         )}
       />
@@ -105,9 +132,12 @@ const TaskConfig = () => {
             fontSize: 18,
             fontWeight: '700',
           }}>
-          Created {task.createdAt}
+          Created {currentTask.createdAt}
         </Text>
-        <TouchableOpacity onPress={() => console.log('Delete task')}>
+        <TouchableOpacity onPress={() => {
+          dispatch(deleteTask({ id: currentTask.id, taskListId: list.id }));
+          navigation.navigate('Tasks', { list });
+        }}>
           <AntIcon name='delete' color='#fff' size={24} />
         </TouchableOpacity>
       </View>
