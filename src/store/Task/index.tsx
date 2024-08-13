@@ -1,34 +1,49 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { createSetState } from '../utility';
 
-interface TaskType {
+export interface TaskType {
     id: number,
     title: string,
     description: string,
     dueDate: string,
     reminder: string,
-    isRecurring: boolean,
-    recurrencePattern: string | null,
+    isImportant: boolean,
+    recurrencePattern: string,
     createdAt: string,
     updatedAt: string,
     done: boolean,
-    recurring: boolean
+    important: boolean
 }
 
 
 export interface TodoState {
-    task: Array<TaskType>
+    tasks: Array<TaskType>
+    currentTask: TaskType
 }
 
-const initialState : TodoState = {
-    task: [],
+const initialState: TodoState = {
+    tasks: [],
+    currentTask: {
+        id: 0,
+        title: "",
+        description: "",
+        dueDate: "",
+        reminder: "",
+        isImportant: false,
+        recurrencePattern: "",
+        createdAt: "",
+        updatedAt: "",
+        done: false,
+        important: false
+    }
 };
 
 const taskSlice = createSlice({
     name: 'task',
     initialState,
     reducers: {
-        setTask: createSetState('task')
+        setTasks: createSetState('tasks'),
+        setCurrentTask: createSetState('currentTask')
     },
 });
 

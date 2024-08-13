@@ -38,7 +38,8 @@ const BottomSheetModal: React.FC<BottomSheetModalProps> = ({ visible, hideModal,
                     <Text style={[styles.title, { color: colors.surface }]}>{title}</Text>
                     {options.map((option, index) => (
                         <TouchableOpacity key={index} style={styles.option} onPress={hideModal}>
-                            <Text style={[styles.optionText, { color: colors.surface }]}>{option}</Text>
+                            <Text onPress={() => console.log(option)
+                            } style={[styles.optionText, { color: colors.surface }]}>{option}</Text>
                         </TouchableOpacity>
                     ))}
                     <TouchableOpacity style={styles.doneButton} onPress={hideModal}>
@@ -46,7 +47,7 @@ const BottomSheetModal: React.FC<BottomSheetModalProps> = ({ visible, hideModal,
                     </TouchableOpacity>
                 </Animated.View>
             </Modal>
-        </Portal>
+        </Portal >
     );
 };
 
